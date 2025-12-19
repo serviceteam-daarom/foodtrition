@@ -6,8 +6,311 @@
     <title>Foodtrition Homepage</title>
     <script type="module" crossorigin src="./assets/index-DCSN3yHX.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-imlFZZFK.css">
+    <style>
+      .auth-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(10, 10, 10, 0.75);
+        backdrop-filter: blur(8px);
+        z-index: 80;
+        padding: 24px;
+      }
+      .auth-modal.is-open {
+        display: flex;
+      }
+      .auth-lock-scroll {
+        overflow: hidden;
+      }
+      .auth-card {
+        width: min(520px, 100%);
+        background: linear-gradient(135deg, #0b1224 0%, #0d172a 100%);
+        color: #f8fafc;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        box-shadow: 0 20px 70px rgba(0, 0, 0, 0.4);
+        border-radius: 18px;
+        padding: 24px;
+        position: relative;
+      }
+      .auth-card__header {
+        display: flex;
+        justify-content: space-between;
+        gap: 16px;
+        align-items: flex-start;
+      }
+      .auth-eyebrow {
+        color: #22c55e;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-size: 12px;
+        margin: 0 0 4px 0;
+      }
+      .auth-title {
+        font-size: 26px;
+        margin: 0 0 8px 0;
+        font-weight: 800;
+        line-height: 1.1;
+      }
+      .auth-subtitle {
+        color: #cbd5e1;
+        margin: 0;
+      }
+      .auth-close {
+        border: 1px solid rgba(226, 232, 240, 0.12);
+        background: rgba(15, 23, 42, 0.8);
+        color: #e2e8f0;
+        border-radius: 9999px;
+        height: 36px;
+        width: 36px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .auth-close:hover {
+        background: rgba(226, 232, 240, 0.12);
+      }
+      .auth-tabs {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin: 16px 0 10px 0;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 6px;
+        border-radius: 12px;
+        border: 1px solid rgba(226, 232, 240, 0.08);
+      }
+      .auth-tab {
+        border: none;
+        background: transparent;
+        color: #cbd5e1;
+        padding: 10px 14px;
+        font-weight: 700;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+      .auth-tab.is-active {
+        background: linear-gradient(135deg, #22c55e, #10b981);
+        color: #0b1224;
+        box-shadow: 0 10px 30px rgba(16, 185, 129, 0.35);
+      }
+      .auth-form {
+        display: grid;
+        gap: 12px;
+        margin-top: 10px;
+      }
+      .auth-field {
+        display: grid;
+        gap: 6px;
+      }
+      .auth-field label {
+        color: #e2e8f0;
+        font-weight: 700;
+      }
+      .auth-field input {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(226, 232, 240, 0.12);
+        background: rgba(255, 255, 255, 0.03);
+        color: #f8fafc;
+        font-size: 15px;
+        outline: none;
+        transition: all 0.2s ease;
+      }
+      .auth-field input:focus {
+        border-color: #22c55e;
+        box-shadow: 0 10px 25px rgba(16, 185, 129, 0.15);
+      }
+      .auth-submit {
+        margin-top: 4px;
+        padding: 13px 16px;
+        border-radius: 12px;
+        border: none;
+        font-weight: 800;
+        font-size: 16px;
+        text-transform: uppercase;
+        cursor: pointer;
+        background: linear-gradient(135deg, #22c55e, #10b981);
+        color: #052e16;
+        box-shadow: 0 15px 40px rgba(16, 185, 129, 0.35);
+        transition: transform 0.15s ease, box-shadow 0.2s ease;
+      }
+      .auth-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 18px 50px rgba(16, 185, 129, 0.4);
+      }
+      .auth-help {
+        font-size: 14px;
+        color: #94a3b8;
+        line-height: 1.5;
+      }
+      .auth-status {
+        margin: 8px 0 0 0;
+        padding: 10px 12px;
+        border-radius: 12px;
+        font-weight: 700;
+        background: rgba(34, 197, 94, 0.12);
+        color: #22c55e;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+      }
+      .auth-hidden {
+        display: none !important;
+      }
+      @media (max-width: 640px) {
+        .auth-card {
+          padding: 18px;
+        }
+        .auth-title {
+          font-size: 22px;
+        }
+        .auth-tabs {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <div id="auth-modal" class="auth-modal" aria-hidden="true">
+      <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="auth-modal-title">
+        <div class="auth-card__header">
+          <div>
+            <p class="auth-eyebrow">Stap binnen</p>
+            <h2 class="auth-title" id="auth-modal-title">Maak een account of log in</h2>
+            <p class="auth-subtitle">Bewaar je favoriete producten en volg je doelen.</p>
+          </div>
+          <button type="button" class="auth-close" data-auth-close aria-label="Sluit inlogvenster">×</button>
+        </div>
+        <div class="auth-tabs" role="tablist" aria-label="Kies login of inschrijving">
+          <button type="button" class="auth-tab is-active" data-auth-tab="login" role="tab" aria-selected="true">Inloggen</button>
+          <button type="button" class="auth-tab" data-auth-tab="signup" role="tab" aria-selected="false">Inschrijven</button>
+        </div>
+        <form class="auth-form" data-auth-form="login">
+          <div class="auth-field">
+            <label for="auth-login-email">E-mailadres</label>
+            <input id="auth-login-email" name="email" type="email" autocomplete="email" required placeholder="jij@example.com" />
+          </div>
+          <div class="auth-field">
+            <label for="auth-login-password">Wachtwoord</label>
+            <input id="auth-login-password" name="password" type="password" autocomplete="current-password" required placeholder="••••••••" />
+          </div>
+          <p class="auth-help">Dit is een demo: we onthouden niets, maar laten je ervaren hoe aanmelden voelt.</p>
+          <button type="submit" class="auth-submit">Inloggen</button>
+        </form>
+        <form class="auth-form auth-hidden" data-auth-form="signup">
+          <div class="auth-field">
+            <label for="auth-signup-name">Naam</label>
+            <input id="auth-signup-name" name="name" type="text" autocomplete="name" required placeholder="Alex de Groot" />
+          </div>
+          <div class="auth-field">
+            <label for="auth-signup-email">E-mailadres</label>
+            <input id="auth-signup-email" name="email" type="email" autocomplete="email" required placeholder="jij@example.com" />
+          </div>
+          <div class="auth-field">
+            <label for="auth-signup-password">Wachtwoord</label>
+            <input id="auth-signup-password" name="password" type="password" autocomplete="new-password" required placeholder="Kies een sterk wachtwoord" />
+          </div>
+          <p class="auth-help">Maak een demo-profiel aan zodat je meteen kunt starten met ontdekken.</p>
+          <button type="submit" class="auth-submit">Account aanmaken</button>
+        </form>
+        <p class="auth-status auth-hidden" data-auth-status></p>
+      </div>
+    </div>
+    <script>
+      (() => {
+        const modal = document.getElementById("auth-modal");
+        if (!modal) return;
+        const status = modal.querySelector("[data-auth-status]");
+        const forms = Array.from(modal.querySelectorAll("[data-auth-form]"));
+        const tabs = Array.from(modal.querySelectorAll("[data-auth-tab]"));
+        const closeButtons = Array.from(modal.querySelectorAll("[data-auth-close]"));
+        const lockScroll = (locked) => document.body.classList.toggle("auth-lock-scroll", locked);
+        const setMode = (mode = "login") => {
+          tabs.forEach((btn) => {
+            const active = btn.dataset.authTab === mode;
+            btn.classList.toggle("is-active", active);
+            btn.setAttribute("aria-selected", active ? "true" : "false");
+            btn.setAttribute("tabindex", active ? "0" : "-1");
+          });
+          forms.forEach((form) => {
+            form.classList.toggle("auth-hidden", form.dataset.authForm !== mode);
+          });
+          modal.dataset.mode = mode;
+        };
+        const focusFirstInput = (mode) => {
+          const activeForm = modal.querySelector(`[data-auth-form="${mode}"]`);
+          const firstInput = activeForm ? activeForm.querySelector("input") : null;
+          if (firstInput) {
+            firstInput.focus({ preventScroll: true });
+          }
+        };
+        const openModal = (mode = "login") => {
+          setMode(mode);
+          modal.classList.add("is-open");
+          modal.setAttribute("aria-hidden", "false");
+          lockScroll(true);
+          status.classList.add("auth-hidden");
+          focusFirstInput(mode);
+        };
+        const closeModal = () => {
+          modal.classList.remove("is-open");
+          modal.setAttribute("aria-hidden", "true");
+          lockScroll(false);
+        };
+        closeButtons.forEach((btn) => btn.addEventListener("click", closeModal));
+        modal.addEventListener("click", (event) => {
+          if (event.target === modal) closeModal();
+        });
+        document.addEventListener("keydown", (event) => {
+          if (event.key === "Escape" && modal.classList.contains("is-open")) {
+            closeModal();
+          }
+        });
+        tabs.forEach((tab) =>
+          tab.addEventListener("click", () => {
+            setMode(tab.dataset.authTab);
+            focusFirstInput(tab.dataset.authTab);
+          })
+        );
+        const showStatus = (message) => {
+          status.textContent = message;
+          status.classList.remove("auth-hidden");
+        };
+        forms.forEach((form) =>
+          form.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const data = new FormData(form);
+            const name = (data.get("name") || "Foodtrition vriend").toString();
+            if (form.dataset.authForm === "signup") {
+              showStatus(`Welkom, ${name}! Je demo-profiel is klaar om te starten.`);
+            } else {
+              showStatus("Demo login gelukt. Je kunt direct verder met ontdekken.");
+            }
+          })
+        );
+        const attachTriggers = () => {
+          const buttons = Array.from(document.querySelectorAll("button"));
+          buttons.forEach((button) => {
+            if (button.dataset.authHooked === "true") return;
+            const label = (button.textContent || "").trim().toUpperCase();
+            if (label === "GET STARTED") {
+              button.dataset.authHooked = "true";
+              button.addEventListener("click", (event) => {
+                event.preventDefault();
+                openModal("signup");
+              });
+            }
+          });
+        };
+        const observer = new MutationObserver(attachTriggers);
+        observer.observe(document.body, { childList: true, subtree: true });
+        attachTriggers();
+      })();
+    </script>
   </body>
 </html>
